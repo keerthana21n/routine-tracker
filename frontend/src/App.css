@@ -1,0 +1,82 @@
+.App {
+  min-height: 100vh;
+}
+
+.app-header {
+  background: #1f2937;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin-bottom: 20px;
+  border: 1px solid #374151;
+}
+
+.app-header h1 {
+  color: #9aad6f;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.app-header p {
+  color: #9ca3af;
+  font-size: 1.1rem;
+}
+
+.app-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.app-nav button {
+  background: #1f2937;
+  border: 1px solid #374151;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  font-weight: 500;
+  color: #e4e4e4;
+}
+
+.app-nav button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  background: #374151;
+}
+
+.app-nav button.active {
+  background: linear-gradient(135deg, #7a8450 0%, #556b2f 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(122, 132, 80, 0.5);
+  border: 1px solid transparent;
+}
+
+.app-content {
+  background: #1f2937;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  min-height: 500px;
+  border: 1px solid #374151;
+}
+
+@media (max-width: 768px) {
+  .app-header h1 {
+    font-size: 2rem;
+  }
+  
+  .app-nav button {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .app-content {
+    padding: 20px;
+  }
+}
