@@ -1,4 +1,4 @@
-.trends-view {
+Re.trends-view {
   animation: fadeIn 0.3s ease;
 }
 
@@ -121,6 +121,28 @@
   backdrop-filter: blur(10px);
 }
 
+.chart-container-full {
+  background: rgba(8, 10, 6, 0.95);
+  padding: 25px;
+  border-radius: 12px;
+  margin-top: 20px;
+  border: 2px solid rgba(90, 90, 60, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+    width: 100%;
+  }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  }
+
 @media (max-width: 968px) {
   .trends-content {
     flex-direction: column;
@@ -129,7 +151,7 @@
   .trends-sidebar {
     flex: 1;
     width: 100%;
-  }
+}
 
   .stats-grid {
     flex-direction: row;
