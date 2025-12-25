@@ -102,19 +102,50 @@ function TrendsView() {
       // Filter data for selected field
       const fieldData = data.filter(entry => entry.field_id === selectedField.id);
 
-      // Prepare chart data
-      const dates = [];
-      const values = [];
-      for (let i = parseInt(dateRange); i >= 0; i--) {
-        const date = format(subDays(new Date(), i), 'yyyy-MM-dd');
-        dates.push(format(subDays(new Date(), i), 'MMM dd'));
+      // Check if we need weekly aggregation
+      const isWeekly = selectedField.frequency === 'weekly';
+      let dates = [];
+      let values = [];
 
+      if (isWeekly) {
+        // Weekly aggregation
+        const numWeeks = Math.ceil(parseInt(dateRange) / 7);
+
+        for (let weekIndex = numWeeks - 1; weekIndex >= 0; weekIndex--) {
+          const weekStartDay = weekIndex * 7;
+          const weekEndDay = Math.min((weekIndex + 1) * 7 - 1, parseInt(dateRange));
+
+          // Count completions in this week
+          let weekCount = 0;
+          for (let i = weekStartDay; i <= weekEndDay; i++) {
+        const date = format(subDays(new Date(), i), 'yyyy-MM-dd');
         const entry = fieldData.find(e => e.date === date);
+
         if (selectedField.type === 'checkbox') {
-          values.push(entry && (entry.value === 'true' || entry.value === true) ? 1 : 0);
-        } else {
-          values.push(entry ? parseFloat(entry.value) : 0);
+              if (entry && (entry.value === 'true' || entry.value === true)) {
+                weekCount++;
         }
+      } else {
+              weekCount += entry ? parseFloat(entry.value) : 0;
+      }
+    }
+
+          dates.unshift(`Week ${numWeeks - weekIndex}`);
+          values.unshift(weekCount);
+        }
+      } else {
+        // Daily view (existing logic)
+        for (let i = parseInt(dateRange); i >= 0; i--) {
+          const date = format(subDays(new Date(), i), 'yyyy-MM-dd');
+          dates.push(format(subDays(new Date(), i), 'MMM dd'));
+
+          const entry = fieldData.find(e => e.date === date);
+          if (selectedField.type === 'checkbox') {
+            values.push(entry && (entry.value === 'true' || entry.value === true) ? 1 : 0);
+      } else {
+            values.push(entry ? parseFloat(entry.value) : 0);
+      }
+    }
       }
 
       setChartData({
@@ -123,21 +154,30 @@ function TrendsView() {
           {
             label: selectedField.name,
             data: values,
-            borderColor: 'rgb(102, 126, 234)',
-            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            borderColor: 'rgb(106, 106, 64)',
+            backgroundColor: 'rgba(106, 106, 64, 0.5)',
             tension: 0.4,
             fill: true,
-          },
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: 'rgb(106, 106, 64)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#8a8860',
+            pointHoverBorderColor: '#fff',
+            pointHoverBorderWidth: 3,
+      },
         ],
       });
 
-      // Calculate statistics
+      // Calculate statistics based on whether we're showing weekly or daily
       const total = values.reduce((sum, val) => sum + val, 0);
-      const completed = values.filter(v => v > 0).length;
+      const completed = isWeekly ? values.filter(v => v > 0).length : values.filter(v => v > 0).length;
 
-      // Calculate expected occurrences based on frequency
-      const expectedOccurrences = calculateExpectedOccurrences(values.length, selectedField.frequency);
-      const percentage = ((completed / expectedOccurrences) * 100).toFixed(1);
+      // Calculate expected occurrences based on frequency and view
+      const expectedOccurrences = isWeekly ? values.length : calculateExpectedOccurrences(parseInt(dateRange) + 1, selectedField.frequency);
+      const percentage = expectedOccurrences > 0 ? ((completed / expectedOccurrences) * 100).toFixed(1) : '0.0';
       const average = selectedField.type === 'number' ? (total / values.length).toFixed(1) : null;
 
       setStats({
@@ -146,7 +186,7 @@ function TrendsView() {
         expected: expectedOccurrences,
         percentage,
         average,
-        streak: calculateStreakByFrequency(values, selectedField.frequency)
+        streak: isWeekly ? calculateWeeklyStreakFromWeeklyData(values) : calculateStreakByFrequency(values, selectedField.frequency)
       });
 
     } catch (error) {
@@ -222,6 +262,19 @@ function TrendsView() {
     return streak;
   };
 
+  // Weekly streak from aggregated weekly data
+  const calculateWeeklyStreakFromWeeklyData = (weeklyValues) => {
+    let streak = 0;
+    for (let i = weeklyValues.length - 1; i >= 0; i--) {
+      if (weeklyValues[i] > 0) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  };
+
   // Bi-weekly streak: consecutive bi-weekly periods with at least one completion
   const calculateBiWeeklyStreak = (values) => {
     let streak = 0;
@@ -281,18 +334,67 @@ function TrendsView() {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: true,
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: '#efefef',
+          font: {
+            size: 14,
+            weight: 'bold'
+          },
+          padding: 15
+        }
       },
       title: {
         display: false,
       },
+      tooltip: {
+        backgroundColor: 'rgba(10, 10, 8, 0.95)',
+        titleColor: '#8a8860',
+        bodyColor: '#efefef',
+        borderColor: '#6a6a40',
+        borderWidth: 2,
+        padding: 12,
+        titleFont: {
+          size: 14,
+          weight: 'bold'
+        },
+        bodyFont: {
+          size: 13
+        }
+      }
     },
     scales: {
       y: {
         beginAtZero: true,
+        grid: {
+          color: '#3a3520',
+          lineWidth: 1
+        },
+        ticks: {
+          color: '#d0d0c8',
+          font: {
+            size: 12,
+            weight: '500'
+          }
+        }
       },
+      x: {
+        grid: {
+          color: '#3a3520',
+          lineWidth: 1
+        },
+        ticks: {
+          color: '#d0d0c8',
+          font: {
+            size: 11
+          },
+          maxRotation: 45,
+          minRotation: 45
+        }
+      }
     },
   };
 
@@ -302,7 +404,7 @@ function TrendsView() {
 
       <div className="controls">
         <div className="control-group">
-          <label>Select Routine:</label>
+          <label>🎯</label>
           <select
             value={selectedField?.id || ''}
             onChange={(e) => {
@@ -363,7 +465,7 @@ function TrendsView() {
     </div>
 
         <div className="control-group">
-          <label>Time Period:</label>
+          <label>📅</label>
           <select value={dateRange || ''} onChange={(e) => setDateRange(e.target.value)}>
             <option value="7">Last 7 days</option>
             <option value="14">Last 14 days</option>
@@ -376,39 +478,53 @@ function TrendsView() {
       </div>
 
       {stats && (
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon">🔥</div>
-            <div className="stat-value">{stats.streak}</div>
-            <div className="stat-label">{getStreakLabel(selectedField.frequency)}</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">✅</div>
-            <div className="stat-value">{stats.completed} / {stats.expected}</div>
-            <div className="stat-label">Completed / Expected</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">📊</div>
-            <div className="stat-value">{stats.percentage}%</div>
-            <div className="stat-label">Success Rate</div>
-          </div>
-          {stats.average && (
+        <div className="trends-content">
+          <div className="trends-sidebar">
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-icon">🔥</div>
+                <div className="stat-content">
+                  <div className="stat-value">{stats.streak}</div>
+                  <div className="stat-label">{getStreakLabel(selectedField.frequency)}</div>
+                </div>
+              </div>
             <div className="stat-card">
-              <div className="stat-icon">📈</div>
-              <div className="stat-value">{stats.average}</div>
-              <div className="stat-label">Average {selectedField.unit || 'Value'}</div>
+                <div className="stat-icon">✅</div>
+                <div className="stat-content">
+                  <div className="stat-value">{stats.completed} / {stats.expected}</div>
+                  <div className="stat-label">Completed / Expected</div>
             </div>
-          )}
         </div>
-      )}
+              <div className="stat-card">
+                <div className="stat-icon">📊</div>
+                <div className="stat-content">
+                  <div className="stat-value">{stats.percentage}%</div>
+                  <div className="stat-label">Success Rate</div>
+        </div>
+    </div>
+              {stats.average && (
+                <div className="stat-card">
+                  <div className="stat-icon">📈</div>
+                  <div className="stat-content">
+                    <div className="stat-value">{stats.average}</div>
+                    <div className="stat-label">Average {selectedField.unit || 'Value'}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-      {chartData && (
-        <div className="chart-container">
-          {selectedField.type === 'checkbox' ? (
-            <Bar data={chartData} options={chartOptions} />
-          ) : (
-            <Line data={chartData} options={chartOptions} />
-          )}
+          <div className="trends-main">
+            {chartData && (
+              <div className="chart-container">
+                {selectedField.type === 'checkbox' ? (
+                  <Bar data={chartData} options={chartOptions} />
+                ) : (
+                  <Line data={chartData} options={chartOptions} />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

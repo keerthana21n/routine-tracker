@@ -10,10 +10,16 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background-image:
+    linear-gradient(135deg, rgba(15, 15, 10, 0.95) 0%, rgba(6, 6, 4, 0.98) 100%),
+    repeating-linear-gradient(90deg, rgba(30, 35, 25, 0.03) 0px, transparent 1px, transparent 80px, rgba(30, 35, 25, 0.03) 81px),
+    repeating-linear-gradient(0deg, rgba(30, 35, 25, 0.03) 0px, transparent 1px, transparent 80px, rgba(30, 35, 25, 0.03) 81px),
+    radial-gradient(ellipse at 50% 0%, rgba(50, 60, 40, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 100%, rgba(40, 50, 35, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(45, 55, 38, 0.1) 0%, transparent 50%);
   min-height: 100vh;
   padding: 20px;
-  color: #e4e4e4;
+  color: #efefef;
 }
 
 code {

@@ -20,7 +20,7 @@ function Settings() {
     name: ''
   });
   const [showAddCategory, setShowAddCategory] = useState(false);
-  const [activeSubcategoryForm, setActiveSubcategoryForm] = useState(null); // categoryId
+  const [activeSubcategoryForm, setActiveSubcategoryForm] = useState(null);
   const [activeFieldForm, setActiveFieldForm] = useState({ categoryId: null, subcategoryId: null });
 
   useEffect(() => {
@@ -128,56 +128,54 @@ function Settings() {
   const renderFieldRow = (field) => (
                             <div key={field.id} className="field-row">
                               <span className="field-info">
-                                <strong>
-                                  {field.name}
-                                  {field.isTemporary && <span className="temp-badge">⏳</span>}
-                                </strong>
+        <strong>{field.name}</strong>
                                 <span className="field-details">
                                   <span className="field-type">
-                                    {field.type === 'checkbox' ? '☑️ Checkbox' : `🔢 Number (${field.unit})`}
+                                    {field.type === 'checkbox' ? '☑️' : `🔢 ${field.unit}`}
                                   </span>
-                                  {field.frequency && (
-                                    <span className="field-frequency">
-                                      {field.frequency === 'daily' && '📅 Daily'}
-                                      {field.frequency === 'weekly' && '📆 Weekly'}
-                                      {field.frequency === 'bi-weekly' && '🗓️ Bi-weekly'}
-                                      {field.frequency === 'every-2-days' && '⏰ Every 2 days'}
-                                    </span>
+          {field.isTemporary && (
+            <span className="temp-badge" title="Temporary">⏳</span>
                                   )}
-                                  {field.tags && (
-                                    <span className="field-tags">
-                                      🏷️ {field.tags}
-                                    </span>
-                                  )}
+          {field.frequency && (
+            <span className="field-frequency">
+              {field.frequency === 'daily' && '📅'}
+              {field.frequency === 'weekly' && '📆'}
+              {field.frequency === 'bi-weekly' && '🗓️'}
+              {field.frequency === 'every-2-days' && '⏰'}
                                 </span>
-                              </span>
-                              <button
-                                className="delete-button"
-                                onClick={() => handleDeleteField(field.id, field.name)}
-                              >
-                                🗑️
-                              </button>
-    </div>
+      )}
+          {field.tags && (
+            <span className="field-tags">🏷️ {field.tags}</span>
+          )}
+      </span>
+      </span>
+        <button
+        className="delete-button"
+        onClick={() => handleDeleteField(field.id, field.name)}
+        >
+        🗑️
+        </button>
+          </div>
   );
 
   const renderFieldForm = (categoryId, subcategoryId = null) => (
     <form onSubmit={(e) => handleAddField(e, categoryId, subcategoryId)} className="inline-form">
-      <input
-        type="text"
+            <input
+              type="text"
         placeholder="Field name (e.g., 'Push-ups', 'Water intake')"
         value={newField.field_name}
         onChange={(e) => setNewField({...newField, field_name: e.target.value})}
-        className="form-input"
-        required
-        autoFocus
-      />
+              className="form-input"
+                    required
+                    autoFocus
+                  />
       <select
         value={newField.field_type}
         onChange={(e) => setNewField({...newField, field_type: e.target.value})}
         className="form-input"
-      >
-        <option value="checkbox">☑️ Checkbox (Yes/No)</option>
-        <option value="number">🔢 Number (with unit)</option>
+                    >
+        <option value="checkbox">☑️</option>
+        <option value="number">🔢</option>
       </select>
 
       {newField.field_type === 'number' && (
@@ -188,17 +186,17 @@ function Settings() {
           onChange={(e) => setNewField({...newField, unit: e.target.value})}
           className="form-input"
         />
-      )}
+              )}
 
       <select
         value={newField.frequency}
         onChange={(e) => setNewField({...newField, frequency: e.target.value})}
         className="form-input"
-      >
-        <option value="daily">📅 Daily</option>
-        <option value="weekly">📆 Weekly</option>
-        <option value="bi-weekly">🗓️ Bi-weekly</option>
-        <option value="every-2-days">⏰ Every 2 days</option>
+                          >
+        <option value="daily">📅</option>
+        <option value="weekly">📆</option>
+        <option value="bi-weekly">🗓️</option>
+        <option value="every-2-days">⏰</option>
       </select>
 
       <input
@@ -219,7 +217,7 @@ function Settings() {
       </label>
 
       <div className="form-actions">
-        <button type="submit" className="submit-button">Add Field</button>
+        <button type="submit" className="submit-button" title="Add Field">✓</button>
         <button
           type="button"
           className="cancel-button"
@@ -236,10 +234,11 @@ function Settings() {
               is_temporary: false
             });
           }}
+          title="Cancel"
         >
-          Cancel
-        </button>
-      </div>
+          ✕
+                          </button>
+                        </div>
     </form>
   );
 
@@ -257,8 +256,9 @@ function Settings() {
             <button
               className="add-button"
               onClick={() => setShowAddCategory(!showAddCategory)}
+              title="Add Category"
             >
-              ➕ Add Category
+              ➕
             </button>
           </div>
         </div>
@@ -272,13 +272,14 @@ function Settings() {
               className="form-input"
             />
             <div className="form-actions">
-              <button type="submit" className="submit-button">Add</button>
+              <button type="submit" className="submit-button" title="Add">✓</button>
               <button
                 type="button"
                 className="cancel-button"
                 onClick={() => setShowAddCategory(false)}
+                title="Cancel"
               >
-                Cancel
+                ✕
               </button>
             </div>
           </form>
@@ -295,14 +296,14 @@ function Settings() {
                     onClick={() => setActiveSubcategoryForm(activeSubcategoryForm === category.id ? null : category.id)}
                     title="Add Subcategory"
                   >
-                    ➕ Subcategory
+                    ➕📁
                   </button>
                   <button
                     className="inline-add-button"
                     onClick={() => setActiveFieldForm({ categoryId: category.id, subcategoryId: null })}
                     title="Add Field (no subcategory)"
                   >
-                    ➕ Field
+                    ➕📝
                   </button>
                 </div>
               </div>
@@ -319,7 +320,7 @@ function Settings() {
                     autoFocus
                   />
                   <div className="form-actions">
-                    <button type="submit" className="submit-button">Add</button>
+                    <button type="submit" className="submit-button" title="Add">✓</button>
                     <button
                       type="button"
                       className="cancel-button"
@@ -327,8 +328,9 @@ function Settings() {
                         setActiveSubcategoryForm(null);
                         setNewSubcategory({ category_id: '', name: '' });
                       }}
+                      title="Cancel"
                     >
-                      Cancel
+                      ✕
                     </button>
                   </div>
                 </form>
@@ -340,7 +342,6 @@ function Settings() {
 
               {category.subcategories && category.subcategories.length > 0 ? (
                 <>
-                  {/* Category-level fields section (no subcategory) */}
                   {category.fields && category.fields.length > 0 && (
                     <div className="direct-fields-section">
                       <h5 className="direct-fields-header">📌 General Fields</h5>
@@ -350,7 +351,6 @@ function Settings() {
                     </div>
                   )}
 
-                  {/* Subcategories section */}
                   <div className="subcategories-container">
                     {category.subcategories.map(subcategory => (
                       <div key={subcategory.id} className="subcategory-section">
@@ -363,7 +363,7 @@ function Settings() {
                             onClick={() => setActiveFieldForm({ categoryId: category.id, subcategoryId: subcategory.id })}
                             title="Add Field to this subcategory"
                           >
-                            ➕ Field
+                            ➕
                           </button>
                         </div>
 

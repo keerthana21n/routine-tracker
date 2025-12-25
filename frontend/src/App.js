@@ -18,20 +18,23 @@ function App() {
         <button 
           className={activeTab === 'tracker' ? 'active' : ''}
           onClick={() => setActiveTab('tracker')}
+          title="Daily Tracker"
         >
-          📝 Daily Tracker
+          📝
         </button>
         <button 
           className={activeTab === 'trends' ? 'active' : ''}
           onClick={() => setActiveTab('trends')}
+          title="Trends"
         >
-          📈 Trends
+          📈
         </button>
-        <button 
+        <button
           className={activeTab === 'settings' ? 'active' : ''}
           onClick={() => setActiveTab('settings')}
+          title="Settings"
         >
-          ⚙️ Settings
+          ⚙️
         </button>
       </nav>
 

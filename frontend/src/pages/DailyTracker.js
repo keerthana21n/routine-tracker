@@ -47,36 +47,26 @@ function DailyTracker() {
   };
 
   const handleSelectAllSubcategory = (subcategory) => {
-    // Check if all fields are daily and checkbox type
-    const allDailyCheckboxes = subcategory.fields.every(
-      field => field.frequency === 'daily' && field.type === 'checkbox'
-    );
-
-    if (!allDailyCheckboxes) return;
-
-    // Check if all are currently checked
-    const allChecked = subcategory.fields.every(
+    // Check if all checkbox fields are currently checked
+    const checkboxFields = subcategory.fields.filter(field => field.type === 'checkbox');
+    if (checkboxFields.length === 0) return;
+    const allChecked = checkboxFields.every(
       field => entries[field.id] === 'true' || entries[field.id] === true
     );
 
-    // Toggle all fields in this subcategory
+    // Toggle all checkbox fields in this subcategory
     const newEntries = { ...entries };
-    subcategory.fields.forEach(field => {
+    checkboxFields.forEach(field => {
       newEntries[field.id] = !allChecked;
     });
     setEntries(newEntries);
   };
 
   const isAllSubcategoryChecked = (subcategory) => {
-    return subcategory.fields.every(
+    const checkboxFields = subcategory.fields.filter(field => field.type === 'checkbox');
+    if (checkboxFields.length === 0) return false;
+    return checkboxFields.every(
       field => entries[field.id] === 'true' || entries[field.id] === true
-    );
-  };
-
-  const canSelectAllSubcategory = (subcategory) => {
-    // Can only select all if all fields are daily checkboxes
-    return subcategory.fields.every(
-      field => field.frequency === 'daily' && field.type === 'checkbox'
     );
   };
 
@@ -124,9 +114,11 @@ function DailyTracker() {
             <span className="checkmark"></span>
             <span className="field-name-wrapper">
               {field.name}
-              {field.isTemporary && <span className="temporary-badge">⏳ Temp</span>}
             </span>
           </label>
+          {field.isTemporary && (
+            <span className="temporary-badge" title="Temporary">⏳</span>
+          )}
           {frequencyBadge && (
             <span className="frequency-badge" title={frequencyBadge.label}>
               {frequencyBadge.emoji}
@@ -140,7 +132,6 @@ function DailyTracker() {
           <div className="number-field">
             <label>
               {field.name}
-              {field.isTemporary && <span className="temporary-badge">⏳ Temp</span>}
             </label>
             <div className="number-input-wrapper">
               <input
@@ -152,6 +143,9 @@ function DailyTracker() {
               {field.unit && <span className="unit">{field.unit}</span>}
             </div>
           </div>
+          {field.isTemporary && (
+            <span className="temporary-badge" title="Temporary">⏳</span>
+          )}
           {frequencyBadge && (
             <span className="frequency-badge" title={frequencyBadge.label}>
               {frequencyBadge.emoji}
@@ -174,6 +168,7 @@ function DailyTracker() {
         />
       </div>
 
+      <div className="categories-container">
       {categories.map(category => {
         const hasSubcategories = category.subcategories && category.subcategories.length > 0;
         const hasDirectFields = category.fields && category.fields.length > 0;
@@ -199,8 +194,8 @@ function DailyTracker() {
             {hasSubcategories && (
               <div className="subcategories-container">
                 {category.subcategories.map(subcategory => {
-                  const showSelectAll = canSelectAllSubcategory(subcategory);
                   const allChecked = isAllSubcategoryChecked(subcategory);
+                  const hasCheckboxFields = subcategory.fields.some(field => field.type === 'checkbox');
                   return (
                     <div key={subcategory.id} className="subcategory">
                       <div className="subcategory-header-wrapper">
@@ -211,15 +206,14 @@ function DailyTracker() {
                           {subcategory.name === 'Oralcare' && '🦷 Oralcare'}
                           {!['Skincare', 'Haircare', 'Bodycare', 'Oralcare'].includes(subcategory.name) && `📋 ${subcategory.name}`}
                         </h4>
-                        {showSelectAll && subcategory.fields.length > 0 && (
-                          <label className="select-all-label">
+                        {hasCheckboxFields && subcategory.fields.length > 0 && (
+                          <label className="select-all-label" title="Select All">
                             <input
                               type="checkbox"
                               checked={allChecked}
                               onChange={() => handleSelectAllSubcategory(subcategory)}
                               className="select-all-checkbox"
                             />
-                            <span className="select-all-text">Select All</span>
                           </label>
                         )}
                   </div>
@@ -238,13 +232,15 @@ function DailyTracker() {
           </div>
         );
       })}
+    </div>
 
       <button
         className="save-button"
         onClick={handleSave}
         disabled={loading}
+        title="Save Today's Data"
       >
-        {loading ? '💾 Saving...' : '💾 Save Today\'s Data'}
+        {loading ? '💾...' : '💾'}
       </button>
     </div>
   );
