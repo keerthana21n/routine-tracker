@@ -1,4 +1,4 @@
-Re.trends-view {
+.trends-view {
   animation: fadeIn 0.3s ease;
 }
 
@@ -28,7 +28,8 @@ Re.trends-view {
   font-size: 1.3rem;
 }
 
-.control-group select {
+.control-group select,
+.control-group input {
     width: 100%;
   padding: 12px;
   border: 2px solid #3a3520;
@@ -40,20 +41,31 @@ Re.trends-view {
   color: #efefef;
   }
 
-.control-group select:focus {
+.control-group select:focus,
+.control-group input:focus {
   outline: none;
   border-color: #6a6a40;
   box-shadow: 0 0 0 3px rgba(106, 106, 64, 0.2);
   }
 
+.control-group input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.control-group input[type="number"]::-webkit-outer-spin-button,
+.control-group input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .stats-grid {
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
   gap: 8px;
   margin-bottom: 0;
-  }
+}
 
-.stat-card {
+  .stat-card {
   background: linear-gradient(135deg, #6a6a40 0%, #4a4a2f 100%);
   color: #fafafa;
   padding: 12px 15px;
@@ -63,35 +75,35 @@ Re.trends-view {
   gap: 12px;
   box-shadow: 0 2px 8px rgba(106, 106, 64, 0.3);
   transition: all 0.3s ease;
-}
+  }
 
 .stat-card:hover {
   transform: translateX(2px);
   box-shadow: 0 3px 12px rgba(106, 106, 64, 0.4);
-}
+  }
 
 .stat-icon {
   font-size: 1.5rem;
   flex-shrink: 0;
-}
+  }
 
 .stat-value {
   font-size: 1.3rem;
   font-weight: bold;
   margin: 0;
-}
+  }
 
 .stat-label {
   font-size: 0.75rem;
   opacity: 0.9;
   line-height: 1.2;
-}
+  }
 
 .stat-content {
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
+  }
 
 .trends-content {
   display: flex;
@@ -104,12 +116,12 @@ Re.trends-view {
   display: flex;
   flex-direction: column;
   gap: 15px;
-}
+  }
 
 .trends-main {
   flex: 1;
   min-width: 0;
-}
+  }
 
 .chart-container {
   background: rgba(8, 10, 6, 0.95);
@@ -129,8 +141,8 @@ Re.trends-view {
   border: 2px solid rgba(90, 90, 60, 0.3);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
-    width: 100%;
-  }
+  width: 100%;
+}
 
 @keyframes fadeIn {
   from {
@@ -141,7 +153,169 @@ Re.trends-view {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Heatmap Styles */
+.heatmap-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(8, 10, 6, 0.95);
+  border-radius: 12px;
+  border: 2px solid rgba(90, 90, 60, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8);
+}
+
+.heatmap-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(20, 22, 15, 0.5);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(106, 106, 64, 0.2);
+}
+
+.heatmap-field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(106, 106, 64, 0.3);
+  margin-bottom: 4px;
+}
+
+.heatmap-field-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #efefef;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 65%;
+}
+
+.heatmap-field-stats {
+  font-size: 0.75rem;
+  color: #8a8860;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+    font-size: 0.7rem;
+  font-weight: 700;
+  gap: 2px;
   }
+
+.stat-badge.streak {
+  background: rgba(255, 140, 0, 0.2);
+  color: #ffb347;
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  }
+
+.stat-badge.success {
+  background: rgba(110, 135, 110, 0.2);
+  color: #9db89d;
+  border: 1px solid rgba(110, 135, 110, 0.3);
+  }
+
+.stat-text {
+  font-size: 0.7rem;
+  color: #a0a090;
+  font-weight: 500;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+  gap: 3px;
+  padding: 4px 0;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-style: solid;
+  position: relative;
+  min-height: 32px;
+  padding: 2px;
+  gap: 1px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.heatmap-cell.completed {
+  opacity: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.heatmap-cell.incomplete {
+  opacity: 0.5;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.2);
+  z-index: 10;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+
+.heatmap-cell-count {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 4px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 1);
+  line-height: 1;
+  order: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.9));
+  letter-spacing: -0.02em;
+}
+
+.heatmap-cell-count.small {
+  font-size: 1rem;
+}
+
+.heatmap-cell-date {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 3px rgba(0, 0, 0, 0.7);
+  opacity: 0.95;
+  line-height: 1;
+  order: 2;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+  letter-spacing: 0;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8a8860;
+  background: rgba(8, 10, 6, 0.5);
+  border-radius: 12px;
+  margin-top: 20px;
+  border: 2px dashed rgba(90, 90, 60, 0.3);
+}
+
+.no-data-message p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
 
 @media (max-width: 968px) {
   .trends-content {
@@ -151,7 +325,7 @@ Re.trends-view {
   .trends-sidebar {
     flex: 1;
     width: 100%;
-}
+  }
 
   .stats-grid {
     flex-direction: row;
@@ -165,5 +339,40 @@ Re.trends-view {
 
   .controls {
     flex-direction: column;
+  }
+
+  .heatmap-container {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+
+  .heatmap-grid {
+    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+    gap: 2px;
+  }
+
+  .heatmap-cell {
+    min-height: 30px;
+  }
+
+  .heatmap-cell-count {
+    font-size: 1.2rem;
+  }
+
+  .heatmap-cell-count.small {
+    font-size: 0.9rem;
+  }
+
+  .heatmap-cell-date {
+    font-size: 0.7rem;
+  }
+
+  .heatmap-field-name {
+    font-size: 0.85rem;
+    max-width: 60%;
+  }
+
+  .heatmap-field-stats {
+    font-size: 0.7rem;
   }
 }
